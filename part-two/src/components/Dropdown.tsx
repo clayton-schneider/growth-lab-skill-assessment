@@ -7,7 +7,6 @@ type DropdownProps = {
 
 const Dropdown = ({ originalPlaces }: DropdownProps) => {
   const scrollRef = useRef<HTMLParagraphElement[]>([])
-  const scrollerRef = useRef<HTMLDivElement>(null)
 
   const [displayPlaces, setDisplayPlacess] = useState(originalPlaces)
 
@@ -68,14 +67,12 @@ const Dropdown = ({ originalPlaces }: DropdownProps) => {
               onFocus={() => {
                 setOpen(true)
                 if (selected.name.length) {
-                  const distToScroll = scrollRef.current[selected.id]?.offsetTop
-                  console.log(scrollRef.current[selected.id], scrollerRef.current)
-                  scrollerRef.current?.scrollTo({top: distToScroll - 300})
+                  scrollRef.current[selected.id].scrollIntoView(true) 
                 }
               }}
               onKeyDown={() => setSearchMode(true)}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full px-5 py-2 border-r border-gray-500 my-1" placeholder="Please select a county" type="text"
+              className="w-full px-5 py-2 border-r border-gray-500 my-1 outline-none" placeholder="Please select a county" type="text"
             />
             {selected.name.length > 0 &&
               <svg onMouseDown={() => setSelected({ id: -1, name: '', level: 'county', parent: -1 })} className="absolute right-1 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z" /></svg>
@@ -83,7 +80,7 @@ const Dropdown = ({ originalPlaces }: DropdownProps) => {
           </div>
 
 
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center px-2 items-center">
             {!open &&
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z" /></svg>
             }
@@ -94,7 +91,7 @@ const Dropdown = ({ originalPlaces }: DropdownProps) => {
 
         </div>
 
-          <div ref={scrollerRef} className={`border max-h-[482px] overflow-y-scroll ${open ? "" : "hidden"}`}>
+          <div className={`border max-h-[480px] overflow-y-scroll ${open ? "visible" : "invisible pointer-events-none"}`}>
             <div>
               {displayPlaces.map(region => {
                 return (
@@ -112,7 +109,7 @@ const Dropdown = ({ originalPlaces }: DropdownProps) => {
                           }} className="px-10 py-1">{state.name}</p>
                           {state.counties.map(county => (
                             <p
-                              ref={el => {scrollRef.current[county.id] = el}}
+                              ref={el => {scrollRef.current[county.id] = el!}}
                               onMouseDown={() => setSelected(county)}
                               className="hover:bg-blue-100 cursor-pointer px-[60px] py-1"
                               key={county.id}
